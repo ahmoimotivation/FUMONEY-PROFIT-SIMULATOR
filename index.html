@@ -86,6 +86,18 @@
   padding: clamp(1rem, 3vw, 2rem) clamp(.75rem, 3vw, 1.5rem) 3rem;
 }
 
+.actuals-pnl-grid {display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); margin-block:12px;}
+.actuals-pnl-kpis {margin-block:12px!important;}
+.actuals-pnl-card {padding:14px; border:1px solid color-mix(in srgb,currentColor 15%,transparent); border-radius:12px;}
+.actuals-pnl-card summary {cursor:pointer; font-weight:700;}
+.actuals-pnl-card table {width:100%; border-collapse:collapse; margin-top:8px; font-variant-numeric:tabular-nums;}
+.actuals-pnl-card :is(th,td) {padding:7px 4px; border-bottom:1px solid color-mix(in srgb,currentColor 13%,transparent); text-align:right;}
+.actuals-pnl-card tr > :first-child {text-align:left;}
+.actuals-pnl-key {font-weight:750; background:color-mix(in srgb,var(--actuals-action) 13%,transparent);}
+.actuals-pnl-note {color:var(--actuals-muted); font-size:.88rem; margin-block:8px!important;}
+.actuals-pnl-inputs {display:grid; gap:8px; grid-template-columns:repeat(3,minmax(0,1fr)); margin:10px 0;}
+.actuals-pnl-inputs input {width:100%; min-width:0;}
+@media(max-width:700px){.actuals-pnl-grid{grid-template-columns:minmax(0,1fr);}.actuals-pnl-inputs{grid-template-columns:repeat(2,minmax(0,1fr));}}
 .actuals h1, .actuals h2, .actuals p, .actuals dl, .actuals dd { margin: 0; }
 .actuals h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.025em; }
 .actuals h2 { font-size: 1.08rem; }
@@ -3776,7 +3788,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       <p>记录保存在当前浏览器。</p>
     </div>
     <div class="actuals-controls">
-      <label for="actuals-month">月份</label>
+      <label for="actuals-month">统计期间</label>
       <select id="actuals-month"></select>
       <button type="button" id="actuals-new" class="actuals-primary">新增场次</button>
     </div>
@@ -3825,7 +3837,7 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   <p id="actuals-empty" class="actuals-empty" hidden>点击「新增场次」录入第一场实际业绩。</p>
 
-  <dl id="actuals-metrics" class="actuals-metrics" aria-label="月度汇总">
+  <dl id="actuals-metrics" class="actuals-metrics" aria-label="业绩汇总">
     <div><dt>课程营收</dt><dd id="actuals-revenue"></dd></div>
     <div><dt>广告费</dt><dd id="actuals-spend"></dd></div>
     <div><dt>总成交</dt><dd id="actuals-order-count"></dd></div>
@@ -3851,6 +3863,17 @@ html&gt;body{padding:0}&lt;/style&gt;
       </dl>
     </section>
   </div>
+
+  <section id="actuals-pnl" aria-label="实际业绩损益表">
+    <p class="actuals-pnl-note">以已记录的营收和未税广告费计算。未填的成本沿用模拟器估算；每个有记录的月份各计一次固定成本。净利与分成是估算，直到该期间的成本均已填入。佣金沿用模拟器公式；亏损月份的估算佣金可能是负数，可改填实付金额。</p>
+    <div class="actuals-metrics actuals-pnl-kpis"><div><dt>总成本</dt><dd data-actual-pnl="cost">—</dd></div><div><dt>项目净利</dt><dd data-actual-pnl="profit">—</dd></div><div><dt>净利率</dt><dd id="actuals-pnl-margin">—</dd></div><div><dt>你的 50% 分成</dt><dd data-actual-pnl="ownShare">—</dd></div></div>
+    <p id="actuals-pnl-completeness" class="actuals-pnl-note" aria-live="polite"></p>
+    <div class="actuals-pnl-grid"><section class="actuals-pnl-card"><h2>Variable cost · 变动成本</h2><table aria-label="Variable cost · 变动成本"><thead><tr><th scope="col">项目</th><th scope="col">金额</th><th scope="col">占营收</th></tr></thead><tbody><tr><th scope="row">Meta 广告费（未税）</th><td data-actual-pnl="adNet">—</td><td data-actual-share="adNet">—</td></tr><tr><th scope="row">Meta 广告 SST</th><td data-actual-pnl="adSst">—</td><td data-actual-share="adSst">—</td></tr><tr><th scope="row">Meta WHT</th><td data-actual-pnl="adWht">—</td><td data-actual-share="adWht">—</td></tr><tr><th scope="row">WABA（含税）</th><td data-actual-pnl="waba">—</td><td data-actual-share="waba">—</td></tr><tr><th scope="row">销售 SST</th><td data-actual-pnl="salesSst">—</td><td data-actual-share="salesSst">—</td></tr><tr><th scope="row">Stripe 手续费</th><td data-actual-pnl="stripe">—</td><td data-actual-share="stripe">—</td></tr><tr><th scope="row">Payex 手续费</th><td data-actual-pnl="payex">—</td><td data-actual-share="payex">—</td></tr><tr><th scope="row">销售佣金</th><td data-actual-pnl="commission">—</td><td data-actual-share="commission">—</td></tr><tr class="actuals-pnl-key"><th scope="row">变动成本合计</th><td data-actual-pnl="variable">—</td><td data-actual-share="variable">—</td></tr></tbody></table></section><section class="actuals-pnl-card"><h2>Fixed cost · 固定成本</h2><table aria-label="Fixed cost · 固定成本"><thead><tr><th scope="col">项目</th><th scope="col">金额</th><th scope="col">占营收</th></tr></thead><tbody><tr><th scope="row">Zoom</th><td data-actual-pnl="zoom">—</td><td data-actual-share="zoom">—</td></tr><tr><th scope="row">Skool</th><td data-actual-pnl="skool">—</td><td data-actual-share="skool">—</td></tr><tr><th scope="row">Hotlink</th><td data-actual-pnl="hotlink">—</td><td data-actual-share="hotlink">—</td></tr><tr class="actuals-pnl-key"><th scope="row">固定成本合计</th><td data-actual-pnl="fixed">—</td><td data-actual-share="fixed">—</td></tr></tbody></table></section><section class="actuals-pnl-card"><h2>Profit sharing · 利润分成</h2><table aria-label="Profit sharing · 利润分成"><thead><tr><th scope="col">项目</th><th scope="col">金额</th><th scope="col">占营收</th></tr></thead><tbody><tr><th scope="row">总营收</th><td data-actual-pnl="revenue">—</td><td data-actual-share="revenue">—</td></tr><tr class="actuals-pnl-key"><th scope="row">总成本</th><td data-actual-pnl="cost">—</td><td data-actual-share="cost">—</td></tr><tr><th scope="row">扣除其他成本后</th><td data-actual-pnl="beforeCommission">—</td><td data-actual-share="beforeCommission">—</td></tr><tr class="actuals-pnl-key"><th scope="row">项目净利／亏损</th><td data-actual-pnl="profit">—</td><td data-actual-share="profit">—</td></tr><tr><th scope="row">你的 50% 分成</th><td data-actual-pnl="ownShare">—</td><td data-actual-share="ownShare">—</td></tr><tr><th scope="row">MTC 的 50% 分成</th><td data-actual-pnl="mtcShare">—</td><td data-actual-share="mtcShare">—</td></tr></tbody></table></section></div>
+    <details id="actuals-cost-editor" class="actuals-pnl-card"><summary>补填本月实际成本</summary>
+      <p class="actuals-pnl-note">留空用模拟器估算；填 0 表示实际没有这项支出。仅保存在当前浏览器。</p>
+      <form id="actuals-cost-form"><div class="actuals-pnl-inputs"><label>Meta 广告 SST（RM）<input name="adSst" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Meta WHT（RM）<input name="adWht" type="number" step="0.01" min="0" inputmode="decimal"></label><label>WABA（含税）（RM）<input name="waba" type="number" step="0.01" min="0" inputmode="decimal"></label><label>销售 SST（RM）<input name="salesSst" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Stripe 手续费（RM）<input name="stripe" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Payex 手续费（RM）<input name="payex" type="number" step="0.01" min="0" inputmode="decimal"></label><label>销售佣金（RM）<input name="commission" type="number" step="0.01" inputmode="decimal"></label><label>Zoom（RM）<input name="zoom" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Skool（RM）<input name="skool" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Hotlink（RM）<input name="hotlink" type="number" step="0.01" min="0" inputmode="decimal"></label></div><button type="submit" class="actuals-primary">保存本月成本</button></form>
+    </details>
+  </section>
 
   <div id="actuals-table" class="actuals-table-wrap" tabindex="0" aria-label="场次明细">
     <table class="actuals-table">
@@ -4246,6 +4269,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     "organicRegistrations", "organicAttendees", "organicOrders", "organicRevenueCents",
     "followUpOrders"
   ];
+  const allMonths = "all";
   const moneyFields = new Set(["adsSpendCents", "adsRevenueCents", "organicRevenueCents"]);
   const storageKey = "fu-money:actual-results:v1";
   const byId = (id) => document.getElementById(id);
@@ -4268,6 +4292,89 @@ html&gt;body{padding:0}&lt;/style&gt;
   const totalOrders = (record) => record.adsOrders + record.organicOrders + record.followUpOrders;
   const totalRevenue = (record) => record.adsRevenueCents + record.organicRevenueCents;
 
+  const monthlyCostKey = "fu-money:actual-monthly-costs:v1";
+  const costFields = ["adSst","adWht","waba","salesSst","stripe","payex","commission","zoom","skool","hotlink"];
+  const costForm = byId("actuals-cost-form");
+  const roundMoney = (n) => Math.sign(n) * Math.round(Math.abs(n) + 1e-9);
+  function readMonthlyCosts() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(monthlyCostKey) || "{}");
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    } catch { return {}; }
+  }
+  let monthlyCosts = readMonthlyCosts();
+  function modelActualCosts(records, overrides = {}) {
+    const adNet = records.reduce((a,r) => a + r.adsSpendCents, 0);
+    const revenue = records.reduce((a,r) => a + totalRevenue(r), 0);
+    const wabaNet = roundMoney(adNet * (18200 / 1821978));
+    const p = {adNet, revenue, adSst:roundMoney(adNet * .08), adWht:roundMoney(adNet * .08),
+      waba:wabaNet + 2 * roundMoney(wabaNet * .08), salesSst:roundMoney(revenue * 8 / 108),
+      stripe:roundMoney(revenue * 151033 / 10629072), payex:roundMoney(revenue * 138989 / 10629072),
+      zoom:33856, skool:3771, hotlink:3000};
+    for (const key of costFields) {
+      if (key !== "commission" && Number.isSafeInteger(overrides?.[key]) && overrides[key] >= 0) p[key] = overrides[key];
+    }
+    p.fixed = p.zoom + p.skool + p.hotlink;
+    const beforeVariable = p.adNet + p.adSst + p.adWht + p.waba + p.salesSst + p.stripe + p.payex;
+    p.beforeCommission = p.revenue - beforeVariable - p.fixed;
+    p.commission = Number.isSafeInteger(overrides?.commission) ? overrides.commission : roundMoney(p.beforeCommission * .075);
+    p.variable = beforeVariable + p.commission;
+    p.cost = p.variable + p.fixed;
+    p.profit = p.revenue - p.cost;
+    p.ownShare = roundMoney(p.profit * .5);
+    p.mtcShare = p.profit - p.ownShare;
+    return p;
+  }
+  function renderActualPnl(viewRecords, selectedPeriod) {
+    const groups = new Map();
+    for (const row of viewRecords) {
+      const key = row.date.slice(0,7);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(row);
+    }
+    const totals = {};
+    let estimatedMonths = 0;
+    for (const [key, rows] of groups) {
+      const overrides = monthlyCosts[key] || {};
+      if (costFields.some(k => !Number.isSafeInteger(overrides[k]))) estimatedMonths++;
+      for (const [k,v] of Object.entries(modelActualCosts(rows, overrides))) totals[k] = (totals[k] || 0) + v;
+    }
+    for (const cell of document.querySelectorAll("[data-actual-pnl]")) cell.textContent = amount(totals[cell.dataset.actualPnl] ?? 0);
+    for (const cell of document.querySelectorAll("[data-actual-share]")) cell.textContent = rate(totals[cell.dataset.actualShare] ?? 0, totals.revenue);
+    byId("actuals-pnl-margin").textContent = rate(totals.profit ?? 0, totals.revenue);
+    byId("actuals-pnl-completeness").textContent = estimatedMonths ? count(estimatedMonths) + " 个月仍有估算费用。要补填，请在上方切到对应月份。" : "所选期间的成本均已填入。";
+    const canEdit = selectedPeriod !== allMonths && groups.has(selectedPeriod);
+    byId("actuals-cost-editor").hidden = !canEdit;
+    if (canEdit) {
+      const overrides = monthlyCosts[selectedPeriod] || {};
+      const estimated = modelActualCosts(viewRecords, { ...overrides, commission:undefined });
+      for (const key of costFields) {
+        const input = costForm.elements.namedItem(key);
+        input.value = Number.isSafeInteger(overrides[key]) ? (overrides[key]/100).toFixed(2) : "";
+        input.placeholder = "估算 " + (estimated[key]/100).toFixed(2);
+      }
+    }
+  }
+  costForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const key = monthSelect.value;
+    if (!/^\d{4}-\d{2}$/.test(key)) return;
+    const values = {};
+    for (const field of costFields) {
+      const input = costForm.elements.namedItem(field);
+      if (!input.value) continue;
+      const cents = roundMoney(input.valueAsNumber * 100);
+      if (!input.validity.valid || !Number.isSafeInteger(cents)) { announce("请检查成本金额。", true); return; }
+      values[field] = cents;
+    }
+    try {
+      const updated = {...readMonthlyCosts(), [key]:values};
+      localStorage.setItem(monthlyCostKey, JSON.stringify(updated));
+      monthlyCosts = updated;
+      renderMonth();
+      announce("本月成本已保存。");
+    } catch { announce("当前浏览器无法保存成本。", true); }
+  });
   let records = initialRecords;
   let editingId = null;
   let returnFocus = newButton;
@@ -4305,13 +4412,20 @@ html&gt;body{padding:0}&lt;/style&gt;
     status.hidden = !message;
   }
 
-  function captionDate(value) {
-    return dateFormat.format(new Date(value + "T00:00:00Z"));
+  function captionDate(value, includeYear = false) {
+    const date = dateFormat.format(new Date(value + "T00:00:00Z"));
+    return includeYear ? date + " " + value.slice(0, 4) : date;
   }
 
   function renderMonths(preferred) {
     const months = [...new Set(records.map((record) => record.date.slice(0, 7)))].sort().reverse();
     monthSelect.replaceChildren();
+    if (months.length) {
+      const option = document.createElement("option");
+      option.value = allMonths;
+      option.textContent = "全部月份总计";
+      monthSelect.append(option);
+    }
     for (const month of months) {
       const option = document.createElement("option");
       option.value = month;
@@ -4325,7 +4439,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       monthSelect.append(placeholder);
     }
     monthSelect.disabled = !months.length;
-    monthSelect.value = months.includes(preferred) ? preferred : (months[0] ?? "");
+    monthSelect.value = months.includes(preferred) ? preferred : (months.length ? allMonths : "");
   }
 
   function writeMetric(element, value, detail = "") {
@@ -4359,11 +4473,11 @@ html&gt;body{padding:0}&lt;/style&gt;
     writeMetric(byId("actuals-ads-cpl"), cpl(totals.adsSpendCents, totals.adsRegistrations));
   }
 
-  function renderRow(record) {
+  function renderRow(record, includeYear) {
     const row = document.createElement("tr");
     const date = document.createElement("time");
     date.dateTime = record.date;
-    date.textContent = captionDate(record.date);
+    date.textContent = captionDate(record.date, includeYear);
     row.insertCell().append(date);
     for (const channel of ["ads", "organic"]) {
       const registrations = record[channel + "Registrations"];
@@ -4385,7 +4499,7 @@ html&gt;body{padding:0}&lt;/style&gt;
     const edit = document.createElement("button");
     edit.type = "button";
     edit.textContent = "编辑";
-    edit.setAttribute("aria-label", "编辑 " + captionDate(record.date) + " 的场次");
+    edit.setAttribute("aria-label", "编辑 " + captionDate(record.date, includeYear) + " 的场次");
     edit.addEventListener("click", () => openEditor(record, edit));
     row.insertCell().append(edit);
     return row;
@@ -4393,15 +4507,18 @@ html&gt;body{padding:0}&lt;/style&gt;
 
   function renderMonth() {
     const month = monthSelect.value;
-    const monthRecords = records.filter((record) => record.date.startsWith(month + "-"));
+    const showingAll = month === allMonths;
+    const monthRecords = showingAll ? records : records.filter((record) => record.date.startsWith(month + "-"));
     const hasRecords = monthRecords.length > 0;
     byId("actuals-empty").hidden = hasRecords;
-    for (const id of ["actuals-metrics", "actuals-channels", "actuals-table"]) {
+    for (const id of ["actuals-metrics", "actuals-channels", "actuals-pnl", "actuals-table"]) {
       byId(id).hidden = !hasRecords;
     }
     renderSummary(monthRecords);
-    byId("actuals-caption").textContent = "场次明细 · " + count(monthRecords.length) + " 场";
-    tableBody.replaceChildren(...monthRecords.map(renderRow));
+    renderActualPnl(monthRecords, month);
+    const nMonths = new Set(monthRecords.map((record) => record.date.slice(0, 7))).size;
+    byId("actuals-caption").textContent = (showingAll ? "全部月份 · " + count(nMonths) + " 个月 · " : "场次明细 · ") + count(monthRecords.length) + " 场";
+    tableBody.replaceChildren(...monthRecords.map((record) => renderRow(record, showingAll)));
   }
 
   function openEditor(record, trigger) {
@@ -4451,7 +4568,7 @@ html&gt;body{padding:0}&lt;/style&gt;
       announce(message, true);
       return;
     }
-    renderMonths(record.date.slice(0, 7));
+    renderMonths(monthSelect.value === allMonths ? allMonths : record.date.slice(0, 7));
     renderMonth();
     closeEditor();
     announce(captionDate(record.date) + " 的场次已保存。");
@@ -4501,7 +4618,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
   window.addEventListener("hashchange", updateTab);
   window.addEventListener("storage", (event) => {
-    if (event.key === storageKey || event.key === null) restoreRecords(monthSelect.value);
+    if (event.key === monthlyCostKey || event.key === null) monthlyCosts = readMonthlyCosts();
+    if (event.key === storageKey || event.key === monthlyCostKey || event.key === null) restoreRecords(monthSelect.value);
   });
   newButton.addEventListener("click", () => openEditor(null, newButton));
   byId("actuals-cancel").addEventListener("click", closeEditor);
