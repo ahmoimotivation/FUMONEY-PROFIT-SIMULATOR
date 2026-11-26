@@ -9,8 +9,294 @@
 <title>FU MONEY P&amp;L 模拟器</title>
 <style>:root{color-scheme:light dark;background:light-dark(#e9eff6,#101825)}html,body{margin:0}body{box-sizing:border-box;background:inherit}iframe{display:block;width:100%;height:100vh;margin:0 auto;border:0}</style>
 
+<style>
+:root {
+  --actuals-surface: light-dark(#ffffff, #182334);
+  --actuals-ink: light-dark(#17283d, #eef4fc);
+  --actuals-muted: light-dark(#53657a, #a6b7cd);
+  --actuals-rule: light-dark(#d4deea, #34445a);
+  --actuals-input: light-dark(#ffffff, #132030);
+  --actuals-action: light-dark(#1c466f, #a4d3ff);
+  --actuals-action-text: light-dark(#ffffff, #101e2f);
+  --actuals-ads: light-dark(#5844a7, #c2b3ff);
+  --actuals-ads-bg: light-dark(#f2effb, #2d2547);
+  --actuals-organic: light-dark(#087557, #7ee0ba);
+  --actuals-organic-bg: light-dark(#e9f7f0, #143528);
+  --actuals-error: light-dark(#9d2820, #ffaea8);
+  --actuals-font: system-ui, "Microsoft YaHei", sans-serif;
+}
+
+.pnl-pages, .actuals {
+  color: var(--actuals-ink);
+  font-family: var(--actuals-font);
+  font-size: 1rem;
+}
+
+.pnl-pages *, .actuals * { box-sizing: border-box; }
+#pnl-simulator-panel[hidden], .actuals[hidden], .actuals [hidden] { display: none; }
+
+.pnl-pages {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  background: var(--actuals-surface);
+  border-bottom: 1px solid var(--actuals-rule);
+}
+
+.pnl-pages-inner {
+  display: flex;
+  gap: .35rem;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: .35rem clamp(.75rem, 3vw, 1.5rem) 0;
+}
+
+.pnl-pages button,
+.actuals button,
+.actuals select,
+.actuals input {
+  color: inherit;
+  font: inherit;
+}
+
+.pnl-pages button {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--actuals-muted);
+  padding: .65rem 1rem;
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.pnl-pages button[aria-selected="true"] {
+  color: var(--actuals-action);
+  border-bottom-color: currentColor;
+}
+
+.pnl-pages button:focus-visible,
+.actuals :is(button, select, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--actuals-action);
+  outline-offset: 2px;
+}
+
+.actuals {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2rem) clamp(.75rem, 3vw, 1.5rem) 3rem;
+}
+
+.actuals h1, .actuals h2, .actuals p, .actuals dl, .actuals dd { margin: 0; }
+.actuals h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.025em; }
+.actuals h2 { font-size: 1.08rem; }
+.actuals-header p { margin-top: .4rem; color: var(--actuals-muted); font-size: .9rem; }
+
+.actuals-header, .actuals-controls, .actuals-form-header, .actuals-form-footer {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+
+.actuals-header, .actuals-form-header, .actuals-form-footer {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.actuals label {
+  color: var(--actuals-muted);
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.actuals button, .actuals select, .actuals input {
+  min-height: 2.5rem;
+  background: var(--actuals-input);
+  border: 1px solid var(--actuals-rule);
+  border-radius: .4rem;
+  padding: .35rem .65rem;
+}
+
+.actuals select {
+  appearance: none;
+  padding-right: 2.05rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='m5 7 4 4 4-4' fill='none' stroke='%23738397' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .5rem center;
+}
+
+.actuals button {
+  font-size: .9rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.actuals button:hover { border-color: var(--actuals-action); }
+.actuals button.actuals-primary {
+  background: var(--actuals-action);
+  border-color: var(--actuals-action);
+  color: var(--actuals-action-text);
+}
+.actuals button.actuals-primary:hover { filter: brightness(1.08); }
+
+.actuals-status {
+  margin-top: .85rem !important;
+  color: var(--actuals-organic);
+  font-size: .9rem;
+}
+.actuals-status[data-error="true"] { color: var(--actuals-error); }
+
+.actuals-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .75rem;
+  margin-top: 1.3rem !important;
+}
+
+.actuals-metrics > div,
+.actuals-channels > section,
+.actuals-form,
+.actuals-table-wrap {
+  background: var(--actuals-surface);
+  border: 1px solid var(--actuals-rule);
+  border-radius: .55rem;
+}
+
+.actuals-metrics > div { padding: .9rem 1rem; }
+.actuals dt, .actuals-small, .actuals-table th span {
+  color: var(--actuals-muted);
+  font-size: .875rem;
+}
+
+.actuals-metrics dd {
+  margin-top: .25rem;
+  font-size: clamp(1rem, 2.4vw, 1.5rem);
+  font-weight: 720;
+  overflow-wrap: anywhere;
+}
+
+.actuals-ads { --channel-ink: var(--actuals-ads); --channel-bg: var(--actuals-ads-bg); }
+.actuals-organic { --channel-ink: var(--actuals-organic); --channel-bg: var(--actuals-organic-bg); }
+
+.actuals-channels, .actuals-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin-top: .75rem;
+}
+
+.actuals-channels > section { padding: .85rem 1rem 1rem; }
+.actuals-channels h2 { color: var(--channel-ink); margin-bottom: .6rem; }
+.actuals-channels dl { display: flex; gap: .65rem 1.6rem; flex-wrap: wrap; }
+.actuals-channels dd { margin-top: .15rem; font-weight: 650; }
+.actuals-small { display: block; margin-top: .15rem; line-height: 1.35; font-weight: 400; }
+.actuals :is(dd, td, input) { font-variant-numeric: tabular-nums; }
+
+.actuals-form { margin-top: 1rem; padding: 1rem; }
+.actuals-form label { display: grid; gap: .25rem; }
+.actuals-form input { width: 100%; font-weight: 500; color: var(--actuals-ink); }
+.actuals-form fieldset { min-width: 0; border: 1px solid var(--actuals-rule); border-radius: .45rem; padding: .8rem; }
+.actuals-form legend { padding: 0 .3rem; color: var(--channel-ink); font-weight: 700; }
+.actuals-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem .7rem; }
+.actuals-form-footer { margin-top: .85rem; align-items: end; }
+
+.actuals-table-wrap {
+  margin-top: 1.2rem;
+  overflow-x: auto;
+}
+
+.actuals-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 52rem;
+  text-align: left;
+  font-size: .93rem;
+}
+
+.actuals-table caption {
+  padding: .8rem .9rem;
+  text-align: left;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.actuals-table :is(th, td) {
+  padding: .7rem .8rem;
+  vertical-align: middle;
+  border-top: 1px solid var(--actuals-rule);
+}
+
+.actuals-table thead th { font-size: .9rem; line-height: 1.35; }
+.actuals-table button { min-height: 2.15rem; padding: .25rem .55rem; }
+.actuals-table time { white-space: nowrap; }
+.actuals-table strong { font-weight: 690; }
+.actuals-table td[data-channel] small { color: var(--channel-ink); }
+.actuals-table td:nth-child(4), .actuals-table td:nth-child(5) { text-align: center; }
+.actuals-table :is(td, th):last-child { text-align: right; }
+
+@media (max-width: 42rem) {
+  .actuals-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .actuals-channels, .actuals-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .actuals-metrics > div { padding: .75rem; }
+  .actuals-controls { flex-wrap: wrap; }
+}
+
+.actuals .actuals-empty {
+  margin-top: 1.25rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--actuals-rule);
+  border-radius: .55rem;
+  background: var(--actuals-surface);
+  color: var(--actuals-muted);
+}
+@media (min-width: 76rem) {
+  body {
+    display: grid;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-inline: 1.25rem;
+  }
+
+  .pnl-pages {
+    top: 1rem;
+    align-self: start;
+    margin-top: 9.875rem;
+    border: 0;
+    background: transparent;
+  }
+
+  .pnl-pages-inner {
+    flex-direction: column;
+    padding: .25rem;
+    border: 1px solid var(--actuals-rule);
+    border-radius: .55rem;
+    background: var(--actuals-surface);
+  }
+
+  .pnl-pages button {
+    border: 0;
+    border-radius: .35rem;
+    padding: .6rem .18rem;
+    font-size: .9rem;
+  }
+
+  .pnl-pages button[aria-selected="true"] {
+    background: var(--actuals-action);
+    color: var(--actuals-action-text);
+  }
+
+  #pnl-simulator-panel, .actuals { min-width: 0; }
+  .actuals { width: 100%; }
+}
+</style>
 </head>
 <body>
+<div class="pnl-pages">
+  <div class="pnl-pages-inner" role="tablist" aria-label="FU MONEY P&amp;L">
+    <button type="button" id="pnl-simulator-tab" role="tab" aria-controls="pnl-simulator-panel" aria-selected="true">模拟器</button>
+    <button type="button" id="pnl-actuals-tab" role="tab" aria-controls="pnl-actuals-panel" aria-selected="false" tabindex="-1">实际业绩</button>
+  </div>
+</div>
+<section id="pnl-simulator-panel" role="tabpanel" aria-labelledby="pnl-simulator-tab">
 <iframe id="codex-visualization" sandbox="allow-scripts" referrerpolicy="no-referrer" title="FU MONEY P&amp;L 模拟器" data-srcdoc="&lt;!doctype html&gt;
 &lt;html lang=&quot;zh-MY&quot; data-visualize-standalone&gt;
 &lt;head&gt;
@@ -3482,6 +3768,110 @@ html&gt;body{padding:0}&lt;/style&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 "></iframe>
+</section>
+<section id="pnl-actuals-panel" class="actuals" role="tabpanel" aria-labelledby="pnl-actuals-tab" hidden>
+  <header class="actuals-header">
+    <div>
+      <h1>实际业绩</h1>
+      <p>记录保存在当前浏览器。</p>
+    </div>
+    <div class="actuals-controls">
+      <label for="actuals-month">月份</label>
+      <select id="actuals-month"></select>
+      <button type="button" id="actuals-new" class="actuals-primary">新增场次</button>
+    </div>
+  </header>
+
+  <p id="actuals-status" class="actuals-status" role="status" hidden></p>
+
+  <form id="actuals-form" class="actuals-form" hidden>
+    <div class="actuals-form-header">
+      <h2 id="actuals-form-title">新增场次</h2>
+      <label for="actuals-date">场次日期
+        <input id="actuals-date" name="date" type="date" required>
+      </label>
+    </div>
+    <div class="actuals-form-grid">
+      <fieldset class="actuals-ads">
+        <legend>Ads</legend>
+        <div class="actuals-fields">
+          <label>报名<input name="adsRegistrations" type="number" min="0" step="1" required></label>
+          <label>出席<input name="adsAttendees" type="number" min="0" step="1" required></label>
+          <label>渠道成交<input name="adsOrders" type="number" min="0" step="1" required></label>
+          <label>营收（RM）<input name="adsRevenueCents" type="number" min="0" step="0.01" required></label>
+          <label>广告费（RM）<input name="adsSpendCents" type="number" min="0" step="0.01" required></label>
+        </div>
+      </fieldset>
+      <fieldset class="actuals-organic">
+        <legend>Organic</legend>
+        <div class="actuals-fields">
+          <label>报名<input name="organicRegistrations" type="number" min="0" step="1" required></label>
+          <label>出席<input name="organicAttendees" type="number" min="0" step="1" required></label>
+          <label>渠道成交<input name="organicOrders" type="number" min="0" step="1" required></label>
+          <label>营收（RM）<input name="organicRevenueCents" type="number" min="0" step="0.01" required></label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="actuals-form-footer">
+      <label>额外跟进成交
+        <input name="followUpOrders" type="number" min="0" step="1" required>
+      </label>
+      <div class="actuals-controls">
+        <button type="button" id="actuals-cancel">取消</button>
+        <button type="submit" class="actuals-primary">保存场次</button>
+      </div>
+    </div>
+  </form>
+
+  <p id="actuals-empty" class="actuals-empty" hidden>点击「新增场次」录入第一场实际业绩。</p>
+
+  <dl id="actuals-metrics" class="actuals-metrics" aria-label="月度汇总">
+    <div><dt>课程营收</dt><dd id="actuals-revenue"></dd></div>
+    <div><dt>广告费</dt><dd id="actuals-spend"></dd></div>
+    <div><dt>总成交</dt><dd id="actuals-order-count"></dd></div>
+    <div><dt>广告 ROAS</dt><dd id="actuals-roas"></dd></div>
+  </dl>
+
+  <div id="actuals-channels" class="actuals-channels">
+    <section class="actuals-ads" aria-labelledby="actuals-ads-title">
+      <h2 id="actuals-ads-title">Ads</h2>
+      <dl>
+        <div><dt>报名</dt><dd id="actuals-ads-leads"></dd></div>
+        <div><dt>出席</dt><dd id="actuals-ads-attendees"></dd></div>
+        <div><dt>渠道成交</dt><dd id="actuals-ads-orders"></dd></div>
+        <div><dt>CPL</dt><dd id="actuals-ads-cpl"></dd></div>
+      </dl>
+    </section>
+    <section class="actuals-organic" aria-labelledby="actuals-organic-title">
+      <h2 id="actuals-organic-title">Organic</h2>
+      <dl>
+        <div><dt>报名</dt><dd id="actuals-organic-leads"></dd></div>
+        <div><dt>出席</dt><dd id="actuals-organic-attendees"></dd></div>
+        <div><dt>渠道成交</dt><dd id="actuals-organic-orders"></dd></div>
+      </dl>
+    </section>
+  </div>
+
+  <div id="actuals-table" class="actuals-table-wrap" tabindex="0" aria-label="场次明细">
+    <table class="actuals-table">
+      <caption id="actuals-caption">场次明细</caption>
+      <thead>
+        <tr>
+          <th scope="col">日期</th>
+          <th scope="col">Ads<br><span>报名 / 出席 / 成交</span></th>
+          <th scope="col">Organic<br><span>报名 / 出席 / 成交</span></th>
+          <th scope="col">跟进成交</th>
+          <th scope="col">总成交</th>
+          <th scope="col">营收</th>
+          <th scope="col">广告费</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody id="actuals-rows"></tbody>
+    </table>
+  </div>
+</section>
+
 
 <script>(() => {
   const frame = document.getElementById("codex-visualization");
@@ -3759,6 +4149,366 @@ html&gt;body{padding:0}&lt;/style&gt;
   }
   frame.srcdoc = frameHtml;
   delete frame.dataset.srcdoc;
+})();
+</script>
+<script>
+(() => {
+  "use strict";
+  const initialRecords = [
+    {
+      "id": "2026-10-21",
+      "date": "2026-10-21",
+      "adsRegistrations": 145,
+      "adsAttendees": 41,
+      "adsOrders": 4,
+      "adsRevenueCents": 798800,
+      "adsSpendCents": 456500,
+      "organicRegistrations": 273,
+      "organicAttendees": 207,
+      "organicOrders": 29,
+      "organicRevenueCents": 7189200,
+      "followUpOrders": 7
+    },
+    {
+      "id": "2026-10-28",
+      "date": "2026-10-28",
+      "adsRegistrations": 211,
+      "adsAttendees": 74,
+      "adsOrders": 3,
+      "adsRevenueCents": 599100,
+      "adsSpendCents": 839039,
+      "organicRegistrations": 54,
+      "organicAttendees": 32,
+      "organicOrders": 4,
+      "organicRevenueCents": 998500,
+      "followUpOrders": 1
+    },
+    {
+      "id": "2026-11-04",
+      "date": "2026-11-04",
+      "adsRegistrations": 172,
+      "adsAttendees": 55,
+      "adsOrders": 1,
+      "adsRevenueCents": 199700,
+      "adsSpendCents": 817125,
+      "organicRegistrations": 30,
+      "organicAttendees": 15,
+      "organicOrders": 3,
+      "organicRevenueCents": 599100,
+      "followUpOrders": 0
+    },
+    {
+      "id": "2026-11-11",
+      "date": "2026-11-11",
+      "adsRegistrations": 169,
+      "adsAttendees": 54,
+      "adsOrders": 4,
+      "adsRevenueCents": 798800,
+      "adsSpendCents": 612289,
+      "organicRegistrations": 13,
+      "organicAttendees": 7,
+      "organicOrders": 0,
+      "organicRevenueCents": 0,
+      "followUpOrders": 0
+    },
+    {
+      "id": "2026-11-18",
+      "date": "2026-11-18",
+      "adsRegistrations": 345,
+      "adsAttendees": 115,
+      "adsOrders": 8,
+      "adsRevenueCents": 1597600,
+      "adsSpendCents": 940281,
+      "organicRegistrations": 18,
+      "organicAttendees": 8,
+      "organicOrders": 2,
+      "organicRevenueCents": 399400,
+      "followUpOrders": 0
+    },
+    {
+      "id": "2026-11-25",
+      "date": "2026-11-25",
+      "adsRegistrations": 265,
+      "adsAttendees": 97,
+      "adsOrders": 6,
+      "adsRevenueCents": 1198200,
+      "adsSpendCents": 978092,
+      "organicRegistrations": 35,
+      "organicAttendees": 13,
+      "organicOrders": 1,
+      "organicRevenueCents": 199700,
+      "followUpOrders": 0
+    }
+  ];
+
+  const fields = [
+    "adsRegistrations", "adsAttendees", "adsOrders", "adsSpendCents", "adsRevenueCents",
+    "organicRegistrations", "organicAttendees", "organicOrders", "organicRevenueCents",
+    "followUpOrders"
+  ];
+  const moneyFields = new Set(["adsSpendCents", "adsRevenueCents", "organicRevenueCents"]);
+  const storageKey = "fu-money:actual-results:v1";
+  const byId = (id) => document.getElementById(id);
+  const form = byId("actuals-form");
+  const monthSelect = byId("actuals-month");
+  const tableBody = byId("actuals-rows");
+  const newButton = byId("actuals-new");
+  const dateInput = byId("actuals-date");
+  const status = byId("actuals-status");
+  const dateFormat = new Intl.DateTimeFormat("en-MY", { day: "numeric", month: "short", timeZone: "UTC" });
+  const amountFormat = new Intl.NumberFormat("en-MY", { style: "currency", currency: "MYR" });
+  const countFormat = new Intl.NumberFormat("en-MY");
+  const rateFormat = new Intl.NumberFormat("en-MY", { style: "percent", maximumFractionDigits: 2 });
+  const roasFormat = new Intl.NumberFormat("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const amount = (cents) => amountFormat.format(cents / 100);
+  const count = (value) => countFormat.format(value);
+  const rate = (value, base) => base ? rateFormat.format(value / base) : "—";
+  const roas = (revenue, spend) => spend ? roasFormat.format(revenue / spend) + "×" : "—";
+  const cpl = (spend, leads) => leads ? amount(spend / leads) : "—";
+  const totalOrders = (record) => record.adsOrders + record.organicOrders + record.followUpOrders;
+  const totalRevenue = (record) => record.adsRevenueCents + record.organicRevenueCents;
+
+  let records = initialRecords;
+  let editingId = null;
+  let returnFocus = newButton;
+
+  function validDate(date) {
+    if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+    const parsed = new Date(date + "T00:00:00Z");
+    return Number.isFinite(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === date;
+  }
+
+  function validRecord(record) {
+    return record && typeof record.id === "string" && record.id.length > 0 &&
+      validDate(record.date) && fields.every((key) => Number.isSafeInteger(record[key]) && record[key] >= 0);
+  }
+
+  function readSavedRecords() {
+    const saved = localStorage.getItem(storageKey);
+    if (saved === null) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed) || !parsed.every(validRecord)) {
+      throw new Error("Invalid saved results");
+    }
+    return parsed;
+  }
+
+  function withInitialRecords(saved) {
+    const byKey = new Map();
+    for (const record of [...initialRecords, ...saved]) byKey.set(record.id, record);
+    return [...byKey.values()].sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  function announce(message, error = false) {
+    status.textContent = message;
+    status.dataset.error = String(error);
+    status.hidden = !message;
+  }
+
+  function captionDate(value) {
+    return dateFormat.format(new Date(value + "T00:00:00Z"));
+  }
+
+  function renderMonths(preferred) {
+    const months = [...new Set(records.map((record) => record.date.slice(0, 7)))].sort().reverse();
+    monthSelect.replaceChildren();
+    for (const month of months) {
+      const option = document.createElement("option");
+      option.value = month;
+      option.textContent = month.slice(0, 4) + " 年 " + Number(month.slice(5)) + " 月";
+      monthSelect.append(option);
+    }
+    if (!months.length) {
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "暂无月份";
+      monthSelect.append(placeholder);
+    }
+    monthSelect.disabled = !months.length;
+    monthSelect.value = months.includes(preferred) ? preferred : (months[0] ?? "");
+  }
+
+  function writeMetric(element, value, detail = "") {
+    element.textContent = value;
+    if (detail) {
+      const small = document.createElement("small");
+      small.className = "actuals-small";
+      small.textContent = detail;
+      element.append(small);
+    }
+  }
+
+  function renderSummary(monthRecords) {
+    const totals = Object.fromEntries(fields.map((key) => [key, 0]));
+    for (const record of monthRecords) {
+      for (const key of fields) totals[key] += record[key];
+    }
+    writeMetric(byId("actuals-revenue"), amount(totalRevenue(totals)));
+    writeMetric(byId("actuals-spend"), amount(totals.adsSpendCents));
+    const followUp = totals.followUpOrders ? "含 " + count(totals.followUpOrders) + " 单跟进" : "";
+    writeMetric(byId("actuals-order-count"), count(totalOrders(totals)), followUp);
+    writeMetric(byId("actuals-roas"), roas(totals.adsRevenueCents, totals.adsSpendCents));
+    for (const channel of ["ads", "organic"]) {
+      const leads = totals[channel + "Registrations"];
+      const attendees = totals[channel + "Attendees"];
+      const orders = totals[channel + "Orders"];
+      writeMetric(byId("actuals-" + channel + "-leads"), count(leads));
+      writeMetric(byId("actuals-" + channel + "-attendees"), count(attendees), rate(attendees, leads));
+      writeMetric(byId("actuals-" + channel + "-orders"), count(orders), rate(orders, attendees));
+    }
+    writeMetric(byId("actuals-ads-cpl"), cpl(totals.adsSpendCents, totals.adsRegistrations));
+  }
+
+  function renderRow(record) {
+    const row = document.createElement("tr");
+    const date = document.createElement("time");
+    date.dateTime = record.date;
+    date.textContent = captionDate(record.date);
+    row.insertCell().append(date);
+    for (const channel of ["ads", "organic"]) {
+      const registrations = record[channel + "Registrations"];
+      const attendees = record[channel + "Attendees"];
+      const orders = record[channel + "Orders"];
+      const cell = row.insertCell();
+      cell.className = "actuals-" + channel;
+      cell.dataset.channel = channel;
+      writeMetric(cell, [registrations, attendees, orders].map(count).join(" / "),
+        rate(attendees, registrations) + " 出席 · " + rate(orders, attendees) + " 成交");
+    }
+    row.insertCell().textContent = count(record.followUpOrders);
+    row.insertCell().textContent = count(totalOrders(record));
+    writeMetric(row.insertCell(), amount(totalRevenue(record)),
+      "Ads " + amount(record.adsRevenueCents) + " · Organic " + amount(record.organicRevenueCents));
+    writeMetric(row.insertCell(), amount(record.adsSpendCents),
+      "CPL " + cpl(record.adsSpendCents, record.adsRegistrations) +
+      " · ROAS " + roas(record.adsRevenueCents, record.adsSpendCents));
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.textContent = "编辑";
+    edit.setAttribute("aria-label", "编辑 " + captionDate(record.date) + " 的场次");
+    edit.addEventListener("click", () => openEditor(record, edit));
+    row.insertCell().append(edit);
+    return row;
+  }
+
+  function renderMonth() {
+    const month = monthSelect.value;
+    const monthRecords = records.filter((record) => record.date.startsWith(month + "-"));
+    const hasRecords = monthRecords.length > 0;
+    byId("actuals-empty").hidden = hasRecords;
+    for (const id of ["actuals-metrics", "actuals-channels", "actuals-table"]) {
+      byId(id).hidden = !hasRecords;
+    }
+    renderSummary(monthRecords);
+    byId("actuals-caption").textContent = "场次明细 · " + count(monthRecords.length) + " 场";
+    tableBody.replaceChildren(...monthRecords.map(renderRow));
+  }
+
+  function openEditor(record, trigger) {
+    editingId = record?.id ?? null;
+    returnFocus = trigger;
+    byId("actuals-form-title").textContent = record ? "编辑 " + captionDate(record.date) : "新增场次";
+    dateInput.value = record?.date ?? "";
+    for (const key of fields) {
+      const field = form.elements.namedItem(key);
+      const value = record?.[key] ?? 0;
+      field.value = moneyFields.has(key) ? (value / 100).toFixed(2) : String(value);
+    }
+    announce("");
+    form.hidden = false;
+    dateInput.focus();
+  }
+
+  function closeEditor() {
+    form.hidden = true;
+    editingId = null;
+    (returnFocus.isConnected ? returnFocus : newButton).focus();
+  }
+
+  function saveRecord(event) {
+    event.preventDefault();
+    const record = {
+      id: editingId ?? (crypto.randomUUID?.() ?? "run-" + crypto.getRandomValues(new Uint32Array(3)).join("-")),
+      date: dateInput.value
+    };
+    for (const key of fields) {
+      const value = form.elements.namedItem(key).valueAsNumber;
+      record[key] = moneyFields.has(key) ? Math.round(value * 100) : value;
+    }
+    if (!validRecord(record)) {
+      announce("请检查日期和各项数字。", true);
+      return;
+    }
+    try {
+      const entries = readSavedRecords().filter((entry) => entry.id !== record.id);
+      entries.push(record);
+      localStorage.setItem(storageKey, JSON.stringify(entries));
+      records = withInitialRecords(entries);
+    } catch (error) {
+      const message = error?.name === "QuotaExceededError"
+        ? "浏览器存储空间已满，当前记录未保存。"
+        : "当前页面无法保存记录。请下载 HTML 后用浏览器打开再试。";
+      announce(message, true);
+      return;
+    }
+    renderMonths(record.date.slice(0, 7));
+    renderMonth();
+    closeEditor();
+    announce(captionDate(record.date) + " 的场次已保存。");
+  }
+
+  function restoreRecords(preferredMonth) {
+    try {
+      records = withInitialRecords(readSavedRecords());
+    } catch {
+      records = withInitialRecords([]);
+      announce("无法读取当前浏览器的已存记录。", true);
+    }
+    renderMonths(preferredMonth);
+    renderMonth();
+  }
+
+  const simTab = byId("pnl-simulator-tab");
+  const actualsTab = byId("pnl-actuals-tab");
+  const panels = {
+    "pnl-simulator-tab": byId("pnl-simulator-panel"),
+    "pnl-actuals-tab": byId("pnl-actuals-panel")
+  };
+  function updateTab() {
+    const selected = location.hash === "#actuals" ? actualsTab : simTab;
+    for (const tab of [simTab, actualsTab]) {
+      const active = tab === selected;
+      tab.setAttribute("aria-selected", String(active));
+      tab.tabIndex = active ? 0 : -1;
+      panels[tab.id].hidden = !active;
+    }
+  }
+
+  for (const tab of [simTab, actualsTab]) {
+    tab.addEventListener("click", () => {
+      location.hash = tab === actualsTab ? "actuals" : "simulator";
+      updateTab();
+    });
+    tab.addEventListener("keydown", (event) => {
+      const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+      if (!keys.includes(event.key)) return;
+      event.preventDefault();
+      const next = event.key === "Home" ? simTab : event.key === "End" ? actualsTab
+        : tab === simTab ? actualsTab : simTab;
+      next.focus();
+      next.click();
+    });
+  }
+  window.addEventListener("hashchange", updateTab);
+  window.addEventListener("storage", (event) => {
+    if (event.key === storageKey || event.key === null) restoreRecords(monthSelect.value);
+  });
+  newButton.addEventListener("click", () => openEditor(null, newButton));
+  byId("actuals-cancel").addEventListener("click", closeEditor);
+  form.addEventListener("submit", saveRecord);
+  monthSelect.addEventListener("change", renderMonth);
+  restoreRecords();
+  updateTab();
 })();
 </script>
 </body>
