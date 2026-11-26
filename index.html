@@ -89,6 +89,9 @@
 .actuals-pnl-grid {display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); margin-block:12px;}
 .actuals-pnl-kpis {margin-block:12px!important;}
 .actuals-pnl-card {padding:14px; border:1px solid color-mix(in srgb,currentColor 15%,transparent); border-radius:12px;}
+.actuals-channel-pnl {margin-block:12px;}
+.actuals-channel-pnl td[data-result="gain"] {color:var(--actuals-organic);}
+.actuals-channel-pnl td[data-result="loss"] {color:var(--actuals-error);}
 .actuals-pnl-card summary {cursor:pointer; font-weight:700;}
 .actuals-pnl-card table {width:100%; border-collapse:collapse; margin-top:8px; font-variant-numeric:tabular-nums;}
 .actuals-pnl-card :is(th,td) {padding:7px 4px; border-bottom:1px solid color-mix(in srgb,currentColor 13%,transparent); text-align:right;}
@@ -3869,6 +3872,15 @@ html&gt;body{padding:0}&lt;/style&gt;
     <div class="actuals-metrics actuals-pnl-kpis"><div><dt>总成本</dt><dd data-actual-pnl="cost">—</dd></div><div><dt>项目净利</dt><dd data-actual-pnl="profit">—</dd></div><div><dt>净利率</dt><dd id="actuals-pnl-margin">—</dd></div><div><dt>你的 50% 分成</dt><dd data-actual-pnl="ownShare">—</dd></div></div>
     <p id="actuals-pnl-completeness" class="actuals-pnl-note" aria-live="polite"></p>
     <div class="actuals-pnl-grid"><section class="actuals-pnl-card"><h2>Variable cost · 变动成本</h2><table aria-label="Variable cost · 变动成本"><thead><tr><th scope="col">项目</th><th scope="col">金额</th><th scope="col">占营收</th></tr></thead><tbody><tr><th scope="row">Meta 广告费（未税）</th><td data-actual-pnl="adNet">—</td><td data-actual-share="adNet">—</td></tr><tr><th scope="row">Meta 广告 SST</th><td data-actual-pnl="adSst">—</td><td data-actual-share="adSst">—</td></tr><tr><th scope="row">Meta WHT</th><td data-actual-pnl="adWht">—</td><td data-actual-share="adWht">—</td></tr><tr><th scope="row">WABA（含税）</th><td data-actual-pnl="waba">—</td><td data-actual-share="waba">—</td></tr><tr><th scope="row">销售 SST</th><td data-actual-pnl="salesSst">—</td><td data-actual-share="salesSst">—</td></tr><tr><th scope="row">Stripe 手续费</th><td data-actual-pnl="stripe">—</td><td data-actual-share="stripe">—</td></tr><tr><th scope="row">Payex 手续费</th><td data-actual-pnl="payex">—</td><td data-actual-share="payex">—</td></tr><tr><th scope="row">销售佣金</th><td data-actual-pnl="commission">—</td><td data-actual-share="commission">—</td></tr><tr class="actuals-pnl-key"><th scope="row">变动成本合计</th><td data-actual-pnl="variable">—</td><td data-actual-share="variable">—</td></tr></tbody></table></section><section class="actuals-pnl-card"><h2>Fixed cost · 固定成本</h2><table aria-label="Fixed cost · 固定成本"><thead><tr><th scope="col">项目</th><th scope="col">金额</th><th scope="col">占营收</th></tr></thead><tbody><tr><th scope="row">Zoom</th><td data-actual-pnl="zoom">—</td><td data-actual-share="zoom">—</td></tr><tr><th scope="row">Skool</th><td data-actual-pnl="skool">—</td><td data-actual-share="skool">—</td></tr><tr><th scope="row">Hotlink</th><td data-actual-pnl="hotlink">—</td><td data-actual-share="hotlink">—</td></tr><tr class="actuals-pnl-key"><th scope="row">固定成本合计</th><td data-actual-pnl="fixed">—</td><td data-actual-share="fixed">—</td></tr></tbody></table></section><section class="actuals-pnl-card"><h2>Profit sharing · 利润分成</h2><table aria-label="Profit sharing · 利润分成"><thead><tr><th scope="col">项目</th><th scope="col">金额</th><th scope="col">占营收</th></tr></thead><tbody><tr><th scope="row">总营收</th><td data-actual-pnl="revenue">—</td><td data-actual-share="revenue">—</td></tr><tr class="actuals-pnl-key"><th scope="row">总成本</th><td data-actual-pnl="cost">—</td><td data-actual-share="cost">—</td></tr><tr><th scope="row">扣除其他成本后</th><td data-actual-pnl="beforeCommission">—</td><td data-actual-share="beforeCommission">—</td></tr><tr class="actuals-pnl-key"><th scope="row">项目净利／亏损</th><td data-actual-pnl="profit">—</td><td data-actual-share="profit">—</td></tr><tr><th scope="row">你的 50% 分成</th><td data-actual-pnl="ownShare">—</td><td data-actual-share="ownShare">—</td></tr><tr><th scope="row">MTC 的 50% 分成</th><td data-actual-pnl="mtcShare">—</td><td data-actual-share="mtcShare">—</td></tr></tbody></table></section></div>
+    <section class="actuals-pnl-card actuals-channel-pnl" aria-labelledby="actuals-channel-pnl-title">
+      <h2 id="actuals-channel-pnl-title">Ads vs Organic · 按来源看利润</h2>
+      <p id="actuals-channel-verdict" class="actuals-pnl-note" aria-live="polite"></p>
+      <table aria-label="Ads 和 Organic 损益对比">
+        <thead><tr><th scope="col">项目</th><th scope="col" class="actuals-ads">Ads</th><th scope="col" class="actuals-organic">Organic</th></tr></thead>
+        <tbody><tr><th scope="row">营收</th><td data-actual-channel="adsRevenue">—</td><td data-actual-channel="organicRevenue">—</td></tr><tr><th scope="row">广告专属费用</th><td data-actual-channel="adsDirect">—</td><td data-actual-channel="organicDirect">—</td></tr><tr><th scope="row">分摊的费用与固定成本</th><td data-actual-channel="adsShared">—</td><td data-actual-channel="organicShared">—</td></tr><tr><th scope="row">销售佣金</th><td data-actual-channel="adsCommission">—</td><td data-actual-channel="organicCommission">—</td></tr><tr><th scope="row">总成本</th><td data-actual-channel="adsCost">—</td><td data-actual-channel="organicCost">—</td></tr><tr class="actuals-pnl-key"><th scope="row">净利／亏损</th><td data-actual-channel="adsProfit">—</td><td data-actual-channel="organicProfit">—</td></tr><tr><th scope="row">净利率</th><td data-actual-channel="adsMargin">—</td><td data-actual-channel="organicMargin">—</td></tr></tbody>
+      </table>
+      <p class="actuals-pnl-note">广告费、广告税费及 WABA 归 Ads；销售税、支付手续费和固定成本按当月两组营收比例分摊。佣金估算沿用模拟器；若补填实付佣金，按营收分摊。未单列归因的跟进成交不另加营收。</p>
+    </section>
     <details id="actuals-cost-editor" class="actuals-pnl-card"><summary>补填本月实际成本</summary>
       <p class="actuals-pnl-note">留空用模拟器估算；填 0 表示实际没有这项支出。仅保存在当前浏览器。</p>
       <form id="actuals-cost-form"><div class="actuals-pnl-inputs"><label>Meta 广告 SST（RM）<input name="adSst" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Meta WHT（RM）<input name="adWht" type="number" step="0.01" min="0" inputmode="decimal"></label><label>WABA（含税）（RM）<input name="waba" type="number" step="0.01" min="0" inputmode="decimal"></label><label>销售 SST（RM）<input name="salesSst" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Stripe 手续费（RM）<input name="stripe" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Payex 手续费（RM）<input name="payex" type="number" step="0.01" min="0" inputmode="decimal"></label><label>销售佣金（RM）<input name="commission" type="number" step="0.01" inputmode="decimal"></label><label>Zoom（RM）<input name="zoom" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Skool（RM）<input name="skool" type="number" step="0.01" min="0" inputmode="decimal"></label><label>Hotlink（RM）<input name="hotlink" type="number" step="0.01" min="0" inputmode="decimal"></label></div><button type="submit" class="actuals-primary">保存本月成本</button></form>
@@ -4325,6 +4337,24 @@ html&gt;body{padding:0}&lt;/style&gt;
     p.mtcShare = p.profit - p.ownShare;
     return p;
   }
+  function splitActualChannels(rows, pnl, overrides) {
+    const organicRevenue = rows.reduce((n, row) => n + row.organicRevenueCents, 0);
+    const organicLeads = rows.reduce((n, row) => n + row.organicRegistrations, 0);
+    const leads = organicLeads + rows.reduce((n, row) => n + row.adsRegistrations, 0);
+    const organicWeight = pnl.revenue ? organicRevenue / pnl.revenue : leads ? organicLeads / leads : .5;
+    const sharedFees = pnl.salesSst + pnl.stripe + pnl.payex;
+    const organicShared = roundMoney(sharedFees * organicWeight) + roundMoney(pnl.fixed * organicWeight);
+    const organicCommission = Number.isSafeInteger(overrides?.commission)
+      ? roundMoney(pnl.commission * organicWeight)
+      : roundMoney((organicRevenue - organicShared) * .075);
+    const organicCost = organicShared + organicCommission;
+    const adsCost = pnl.cost - organicCost;
+    const adsRevenue = pnl.revenue - organicRevenue;
+    return {adsRevenue, organicRevenue, adsDirect:pnl.adNet + pnl.adSst + pnl.adWht + pnl.waba, organicDirect:0,
+      adsShared:sharedFees + pnl.fixed - organicShared, organicShared,
+      adsCommission:pnl.commission - organicCommission, organicCommission,
+      adsCost, organicCost, adsProfit:adsRevenue - adsCost, organicProfit:organicRevenue - organicCost};
+  }
   function renderActualPnl(viewRecords, selectedPeriod) {
     const groups = new Map();
     for (const row of viewRecords) {
@@ -4333,15 +4363,32 @@ html&gt;body{padding:0}&lt;/style&gt;
       groups.get(key).push(row);
     }
     const totals = {};
+    const channelTotals = {};
     let estimatedMonths = 0;
     for (const [key, rows] of groups) {
       const overrides = monthlyCosts[key] || {};
       if (costFields.some(k => !Number.isSafeInteger(overrides[k]))) estimatedMonths++;
-      for (const [k,v] of Object.entries(modelActualCosts(rows, overrides))) totals[k] = (totals[k] || 0) + v;
+      const pnl = modelActualCosts(rows, overrides);
+      for (const [k,v] of Object.entries(pnl)) totals[k] = (totals[k] || 0) + v;
+      for (const [k,v] of Object.entries(splitActualChannels(rows, pnl, overrides))) channelTotals[k] = (channelTotals[k] || 0) + v;
     }
     for (const cell of document.querySelectorAll("[data-actual-pnl]")) cell.textContent = amount(totals[cell.dataset.actualPnl] ?? 0);
     for (const cell of document.querySelectorAll("[data-actual-share]")) cell.textContent = rate(totals[cell.dataset.actualShare] ?? 0, totals.revenue);
     byId("actuals-pnl-margin").textContent = rate(totals.profit ?? 0, totals.revenue);
+    for (const cell of document.querySelectorAll("[data-actual-channel]")) {
+      const key = cell.dataset.actualChannel;
+      if (key.endsWith("Margin")) {
+        const channel = key.slice(0,-6);
+        cell.textContent = rate(channelTotals[channel+"Profit"] ?? 0, channelTotals[channel+"Revenue"]);
+      } else {
+        const value = channelTotals[key] ?? 0;
+        cell.textContent = amount(value);
+        if (key.endsWith("Profit")) cell.dataset.result = value > 0 ? "gain" : value < 0 ? "loss" : "flat";
+      }
+    }
+    const verdict = (label, value) => label + " " + (value > 0 ? "赚 " + amount(value) : value < 0 ? "亏 " + amount(-value) : "打平");
+    byId("actuals-channel-verdict").textContent = (estimatedMonths ? "估算：" : "按已填成本：") +
+      verdict("Ads",channelTotals.adsProfit ?? 0) + "；" + verdict("Organic",channelTotals.organicProfit ?? 0) + "。";
     byId("actuals-pnl-completeness").textContent = estimatedMonths ? count(estimatedMonths) + " 个月仍有估算费用。要补填，请在上方切到对应月份。" : "所选期间的成本均已填入。";
     const canEdit = selectedPeriod !== allMonths && groups.has(selectedPeriod);
     byId("actuals-cost-editor").hidden = !canEdit;
